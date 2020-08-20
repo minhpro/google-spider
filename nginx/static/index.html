@@ -15,18 +15,23 @@
               text-align: left;
               padding: 8px;
             }
+
+            input {
+                font-size: medium;
+            }
             </style>
     </head>
     <body>
         <h2>Type your keyword and url</h2>
         <form id="search" onsubmit="return false">
             <label for="keyword">Keyword:</label><br>
-            <input type="text" id="keyword" name="keyword"><br><br>
+            <input type="text" id="keyword" name="keyword" required><br><br>
             <label for="url">URL:</label><br>
-            <input type="text" id="url" name="url"><br><br>
+            <input type="text" id="url" name="url" required><br><br>
             <input type="submit" value="Submit" onclick="searchKeyword()">
         </form>
     </body>
+    <br><br>
     <h2>The result</h2>
     <table id="result">
         <thead>

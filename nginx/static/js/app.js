@@ -1,6 +1,8 @@
 function searchKeyword() {
     var keyword = document.getElementById('keyword').value;
     var url = document.getElementById('url').value;
+    if (!keyword || keyword === "" || !url || url === "")
+        return;
     console.log("Keyword: " + keyword + " - URL: " + url);
     const parameter = {
         method: 'POST',
@@ -18,6 +20,7 @@ function searchKeyword() {
         })
         .catch((error) => {
             console.error('Error:', error);
+            alert("Something went wrong, please try again!");
         });
 }
 
