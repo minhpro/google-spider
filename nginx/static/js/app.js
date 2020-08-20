@@ -36,7 +36,10 @@ function updateResultTable(data) {
         
         rankCell.appendChild(document.createTextNode(item['rank']));
         titleCell.appendChild(document.createTextNode(item['title']));
-        urlCell.appendChild(document.createTextNode(item['url']));
+        var urlLink = document.createElement('a');
+        urlLink.href = item['url'];
+        urlLink.text = item['url'];
+        urlCell.appendChild(urlLink);
 
         row.appendChild(rankCell);
         row.appendChild(titleCell);
@@ -46,4 +49,7 @@ function updateResultTable(data) {
     })
 
     resultTable.replaceChild(newBody, oldBody);
+    if (data.length == 0) {
+        alert("There is no result, please try an other!")
+    }
 }

@@ -21,7 +21,7 @@ class GoogleSearchSpider(scrapy.Spider):
             f.write(response.body)
         i = 0
         for item in response.xpath('//*[@id="main"]/div/div/div/a'):
-            url = item.xpath("div/text()").get()
+            url = item.xpath("div/text()").get().replace(" › ", "/")
             title = item.xpath("h3/div/text()").get()
             if url is not None and title is not None:
                 i += 1
