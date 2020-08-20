@@ -21,15 +21,18 @@ class GoogleSearchSpider(scrapy.Spider):
             f.write(response.body)
         i = 0
         for item in response.xpath('//*[@id="main"]/div/div/div/a'):
-            url = item.xpath("div/text()").get().replace(" › ", "/")
+            link = item.xpath("@href").get()
+            if "url?q=" in link:
+                link = link.split("/url?q=", 1)[1]
+            link = link.split("&")[0]
             title = item.xpath("h3/div/text()").get()
-            if url is not None and title is not None:
+            if link is not None and title is not None:
                 i += 1
-                if self.checkUrl is not None and self.checkUrl in url:
+                if self.checkUrl is not None and self.checkUrl in link:
                     yield {
                         'rank': i,
                         'title': title,
-                        'url': url
+                        'url': link
                     }
             
 def spider_results():
