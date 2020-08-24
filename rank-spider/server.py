@@ -29,10 +29,12 @@ def search():
     keyword = req_data['keyword']
     url = req_data['url']
     result = spider_search(keyword, url, MAX_PAGE, NUM)
-    if not result:
-        return make_response(jsonify("Not found"), 404)
     with open(STATE_FILE, "w") as f:
         f.write('{}={}'.format("searching", 0))
+        
+    if not result:
+        return make_response(jsonify("Not found"), 404)
+    
     return result
 
 def spider_search(keyword, url, maxpage, num):
