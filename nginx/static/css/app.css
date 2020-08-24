@@ -31,8 +31,12 @@
 background-color: royalblue;
 }
 
+.rank-label {
+    padding-left: 10px;
+}
+
 .rank {
-    width: 20px;
+    width: 30px;
 }
 
 .full-url {

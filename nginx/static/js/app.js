@@ -14,14 +14,21 @@ function searchRank(index) {
 
     fetch('/api/search', parameter)
         .then(response => {
+            if (response.ok) {
+                return response.json()
+            }
             if (response.status == 404) {
                 updateNotFound(index);
             }
-            return response.json()
+            if (response.status == 419) {
+                alert("Keyword is searching! Please try again later");
+            }
         })
         .then(data => {
-            console.log(data); 
-            updateRankAndFullURL(index, data);
+            if (data) {
+                console.log(data); 
+                updateRankAndFullURL(index, data);
+            }
         })
         .catch((error) => {
             console.error('Error:', error);
