@@ -14,7 +14,7 @@ services:
       - spider-network
 
   spider-service:
-    build: ./app
+    build: ./rank-spider
     container_name: spider-service
     networks:
       - spider-network

@@ -3,45 +3,71 @@
     <head>
         <title>Google Spider</title>
         <script type="text/javascript" src="js/app.js"></script>
-        <style>
-            table {
-              font-family: arial, sans-serif;
-              border-collapse: collapse;
-              width: 100%;
-            }
-            
-            td, th {
-              border: 1px solid #dddddd;
-              text-align: left;
-              padding: 8px;
-            }
-
-            input {
-                font-size: medium;
-            }
-            </style>
+        <link rel="stylesheet" type="text/css" href="css/app.css">
     </head>
     <body>
         <h2>Type your keyword and url</h2>
-        <form id="search" onsubmit="return false">
-            <label for="keyword">Keyword:</label><br>
-            <input type="text" id="keyword" name="keyword" required><br><br>
-            <label for="url">URL:</label><br>
-            <input type="text" id="url" name="url" required><br><br>
-            <input type="submit" value="Submit" onclick="searchKeyword()">
-        </form>
+        <div id="list">
+            <div class="form-inline">
+                <label for="keyword-1">Keyword:</label><br>
+                <input type="text" id="keyword-1" name="keyword" required><br><br>
+                <label for="url-1">URL:</label><br>
+                <input type="text" id="url-1" name="url" required><br><br>
+                <button type="submit" onclick="searchRank(1)">Submit</button>
+                <label for="rank-1">Rank:</label><br>
+                <input class="rank" type="text" id="rank-1" disabled><br><br>
+                <label for="full-url-1">FullURL:</label><br>
+                <input class="full-url" type="text" id="full-url-1" disabled><br><br>
+            </div>
+            <br>
+            <div class="form-inline">
+                <label for="keyword-2">Keyword:</label><br>
+                <input type="text" id="keyword-2" name="keyword" required><br><br>
+                <label for="url-2">URL:</label><br>
+                <input type="text" id="url-2" name="url" required><br><br>
+                <button type="submit" onclick="searchRank(2)">Submit</button>
+                <label for="rank-2">Rank:</label><br>
+                <input class="rank" type="text" id="rank-2" disabled><br><br>
+                <label for="full-url-2">FullURL:</label><br>
+                <input class="full-url" type="text" id="full-url-2" disabled><br><br>
+            </div>
+            <br>
+            <div class="form-inline">
+                <label for="keyword-3">Keyword:</label><br>
+                <input type="text" id="keyword-3" name="keyword" required><br><br>
+                <label for="url-3">URL:</label><br>
+                <input type="text" id="url-3" name="url" required><br><br>
+                <button type="submit" onclick="searchRank(3)">Submit</button>
+                <label for="rank-3">Rank:</label><br>
+                <input class="rank" type="text" id="rank-3" disabled><br><br>
+                <label for="full-url-3">FullURL:</label><br>
+                <input class="full-url" type="text" id="full-url-3" disabled><br><br>
+            </div>
+            <br>
+            <div class="form-inline">
+                <label for="keyword-4">Keyword:</label><br>
+                <input type="text" id="keyword-4" name="keyword" required><br><br>
+                <label for="url-4">URL:</label><br>
+                <input type="text" id="url-4" name="url" required><br><br>
+                <button type="submit" onclick="searchRank(4)">Submit</button>
+                <label for="rank-4">Rank:</label><br>
+                <input class="rank" type="text" id="rank-4" disabled><br><br>
+                <label for="full-url-4">FullURL:</label><br>
+                <input class="full-url" type="text" id="full-url-4" disabled><br><br>
+            </div>
+            <br>
+            <div class="form-inline">
+                <label for="keyword-5">Keyword:</label><br>
+                <input type="text" id="keyword-5" name="keyword" required><br><br>
+                <label for="url-5">URL:</label><br>
+                <input type="text" id="url-5" name="url" required><br><br>
+                <button type="submit" onclick="searchRank(5)">Submit</button>
+                <label for="rank-5">Rank:</label><br>
+                <input class="rank" type="text" id="rank-5" disabled><br><br>
+                <label for="full-url-5">FullURL:</label><br>
+                <input class="full-url" type="text" id="full-url-5" disabled><br><br>
+            </div>
+        </div>
     </body>
     <br><br>
-    <h2>The result</h2>
-    <table id="result">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Title</th>
-                <th>Full URL</th>
-              </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
 </html>
