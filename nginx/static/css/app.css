@@ -20,15 +20,24 @@
 }
 
 /* Style the submit button */
-.form-inline button {
+.submit button {
     padding: 10px 20px;
     background-color: dodgerblue;
     border: 1px solid #ddd;
     color: white;
 }
 
-.form-inline button:hover {
+.submit button:hover {
 background-color: royalblue;
+}
+
+.inline {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.inline > * {
+    margin-left: 20px;
 }
 
 .rank-label {

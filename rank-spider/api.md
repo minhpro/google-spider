@@ -1,3 +1,16 @@
+
+## Code 
+
+const INIT_STATE = 0
+const SEARCHING = 1
+const SLEEPY = 2
+const DONE = 3
+
+const OK = 0
+const EMPTY_RESULT = 3
+const INVALID_INPUT = 4
+const ERROR = 5
+
 ## API: /search
 
 For each keyword and url, search keyword and return the rank of url
@@ -18,7 +31,7 @@ Body:
 Response
 
 {
-    "code": 0, // 0: OK, 2: Error, 3: Invalid input
+    "code": 0, 
     "message": "We are searching. Please get result after some minutes"
 }
 
@@ -30,7 +43,7 @@ Get the most recent searching result
 Response with HTTP 200
 
 {
-    "code": 0 // 0: OK, 1: Empty answer, 2: server error
+    "code": 0 
     "result": [
         {"index": 1, "keyword": "key1", "url": "url1", "code": 0, "rank": 20, "fullUrl": "https://example1.com"},
         {"index": 2, "keyword": "key2", "url": "url2", "code": 0, "rank": 21, "fullUrl": "https://example2.com"},

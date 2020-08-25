@@ -15,13 +15,13 @@ DATA_FILE = "data.json"
 
 INIT_STATE = 0
 SEARCHING = 1
-DONE = 2
+SLEEPY = 2
+DONE = 3
 
 OK = 0
-BUSY = 1
-EMPTY_RESULT = 1
-ERROR = 2
-INVALID_INPUT = 3
+EMPTY_RESULT = 3
+INVALID_INPUT = 4
+ERROR = 5
 
 DEPLAY = 2
 WAIT_TIME = 60
@@ -33,32 +33,27 @@ def hello_world():
 
 @app.route('/result')
 def get_result():
-     with open(DATA_FILE, "r") as f:
-        try:
+    state_code = check_state()
+    if state_code == SEARCHING:
+        return {'code': SEARCHING, 'message': "System is busy. Please try again later after one minute!"}
+
+    try:
+        with open(DATA_FILE, "r") as f:
             content = f.read()
             if content and content != "":
                 return content
             else:
                 return {'code': EMPTY_RESULT, 'message': "There is no result!"}
-        except Exception:
-            return {'code': ERROR, 'message': "Error!"}
+    except FileNotFoundError:
+        return {'code': EMPTY_RESULT, 'message': "Error!"}
+    except Exception:
+        return {'code': ERROR, 'message': "Error!"}
 
 @app.route('/search', methods = ['POST'])
 def search():
-    with open(STATE_FILE, "r") as f:
-        content = f.read();
-        values = content.split()
-        state = int(values[0])
-        now = int(time.time())
-        if state == SEARCHING:
-            start_time = int(values[1])
-            if (now - start_time) < TIMEOUT_SEARCHING:
-                return {'code': BUSY, 'message': "System is busy. Please try again later after one minute!"}
-
-        if state == DONE:
-            done_time = int(values[1])
-            if (now - done_time) < WAIT_TIME:
-                return {'code': BUSY, 'message': "System is busy. Please try again later after one minute!"}
+    state_code = check_state()
+    if state_code == SEARCHING or state_code == SLEEPY:
+        return {'code': SEARCHING, 'message': "System is busy. Please try again later after one minute!"}
 
     save_state('{} {}'.format(SEARCHING, int(time.time())))
 
@@ -78,6 +73,26 @@ def save_search_result(data):
 def save_state(state):
     with open(STATE_FILE, 'w') as fp:
         fp.write(state)
+
+def check_state():
+    with open(STATE_FILE, "r") as f:
+        try:
+            content = f.read();
+            values = content.split()
+            state = int(values[0])
+            now = int(time.time())
+            if state == SEARCHING:
+                start_time = int(values[1])
+                if (now - start_time) < TIMEOUT_SEARCHING:
+                    return SEARCHING
+
+            if state == DONE:
+                done_time = int(values[1])
+                if (now - done_time) < WAIT_TIME:
+                    return SLEEPY
+        except Exception:
+            return ERROR
+    return OK
 
 # Should searching in a thread
 def multi_items_search(items):
