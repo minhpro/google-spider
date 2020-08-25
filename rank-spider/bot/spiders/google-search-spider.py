@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import scrapy
 from scrapy import signals
 from scrapy.crawler import CrawlerProcess

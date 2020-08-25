@@ -1,41 +1,104 @@
+# -*- coding: utf-8 -*-
 import subprocess
 import json
 import time
+from threading import Thread
 
 from flask import Flask, request, Response
 from flask import make_response, jsonify
 app = Flask(__name__)
+
+MAX_PAGE = 10
+NUM = 100
 STATE_FILE = "state.dat"
+DATA_FILE = "data.json"
+
+INIT_STATE = 0
+SEARCHING = 1
+DONE = 2
+
+OK = 0
+BUSY = 1
+EMPTY_RESULT = 1
+ERROR = 2
+INVALID_INPUT = 3
+
+DEPLAY = 2
+WAIT_TIME = 60
+TIMEOUT_SEARCHING = 180
 
 @app.route('/')
 def hello_world():
     return 'Hello Spiderbot!'
 
+@app.route('/result')
+def get_result():
+     with open(DATA_FILE, "r") as f:
+        try:
+            content = f.read()
+            if content and content != "":
+                return content
+            else:
+                return {'code': EMPTY_RESULT, 'message': "There is no result!"}
+        except Exception:
+            return {'code': ERROR, 'message': "Error!"}
+
 @app.route('/search', methods = ['POST'])
 def search():
-    MAX_PAGE = 10
-    NUM = 100
-
     with open(STATE_FILE, "r") as f:
         content = f.read();
-        key, value = content.split("=", 1)
-        if key == "searching" and value == "1":
-            return make_response(jsonify("Searching! Please try again later"), 419)
-    
-    with open(STATE_FILE, "w") as f:
-        f.write('{}={}'.format("searching", 1))
+        values = content.split()
+        state = int(values[0])
+        now = int(time.time())
+        if state == SEARCHING:
+            start_time = int(values[1])
+            if (now - start_time) < TIMEOUT_SEARCHING:
+                return {'code': BUSY, 'message': "System is busy. Please try again later after one minute!"}
+
+        if state == DONE:
+            done_time = int(values[1])
+            if (now - done_time) < WAIT_TIME:
+                return {'code': BUSY, 'message': "System is busy. Please try again later after one minute!"}
+
+    save_state('{} {}'.format(SEARCHING, int(time.time())))
 
     req_data = request.get_json()
-    keyword = req_data['keyword']
-    url = req_data['url']
-    result = spider_search(keyword, url, MAX_PAGE, NUM)
-    with open(STATE_FILE, "w") as f:
-        f.write('{}={}'.format("searching", 0))
+    items = req_data['items']
+    if not items or len(items) == 0:
+        return {'code': INVALID_INPUT, 'message': "Please provide a list of keywords and urls"}
+    thread = Thread(target = multi_items_search, args = (items, ))
+    thread.start()
+
+    return {'code': OK, 'message': "We are searching. Please get result after some minutes"}
+
+def save_search_result(data):
+    with open(DATA_FILE, 'w', encoding="utf-8") as fp:
+        json.dump(data, fp, ensure_ascii=False)
+
+def save_state(state):
+    with open(STATE_FILE, 'w') as fp:
+        fp.write(state)
+
+# Should searching in a thread
+def multi_items_search(items):
+    result = []
+    for item in items:
+        index = item['index']
+        keyword = item['keyword']
+        url = item['url']
+        item_result = spider_search(keyword, url, MAX_PAGE, NUM)
+
+        if not item_result:
+            result.append({'index': index, 'keyword': keyword, 'url': url, 'code': 1, 'message': "Not Found"})
+        else:
+            rank = item_result['rank']
+            full_url = item_result['url']
+            result.append({'index': index, 'keyword': keyword, 'url': url, 'code': 0, 'rank': rank, 'fullUrl': full_url})
+        time.sleep(DEPLAY)
         
-    if not result:
-        return make_response(jsonify("Not found"), 404)
-    
-    return result
+    data = {'code': OK, 'result': result}
+    save_search_result(data)
+    save_state('{} {}'.format(DONE, int(time.time())))
 
 def spider_search(keyword, url, maxpage, num):
     for i in range(maxpage):
@@ -65,9 +128,9 @@ def spider_search(keyword, url, maxpage, num):
                     return None
             except Exception:
                 return None
-        time.sleep(0.2)
+        time.sleep(DEPLAY)
 
 if __name__ == '__main__':
     with open(STATE_FILE, "w+") as f:
-        f.write('{}={}'.format("searching", 0))
+        f.write(str(INIT_STATE))
     app.run(host="0.0.0.0", debug=True)
