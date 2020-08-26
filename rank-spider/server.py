@@ -2,6 +2,7 @@
 import subprocess
 import json
 import time
+from datetime import datetime
 from threading import Thread
 
 from flask import Flask, request, Response
@@ -53,7 +54,7 @@ def get_result():
 def search():
     state_code = check_state()
     if state_code == SEARCHING or state_code == SLEEPY:
-        return {'code': SEARCHING, 'message': "System is busy. Please try again later after one minute!"}
+        return {'code': state_code, 'message': "System is busy. Please try again later after one minute!"}
 
     save_state('{} {}'.format(SEARCHING, int(time.time())))
 
@@ -103,12 +104,13 @@ def multi_items_search(items):
         url = item['url']
         item_result = spider_search(keyword, url, MAX_PAGE, NUM)
 
+        date_time = datetime.now().strftime("%m-%d-%Y, %H:%M:%S")
         if not item_result:
-            result.append({'index': index, 'keyword': keyword, 'url': url, 'code': 1, 'message': "Not Found"})
+            result.append({'index': index, 'keyword': keyword, 'url': url, 'code': 1, 'message': "Not Found", 'time': date_time})
         else:
             rank = item_result['rank']
             full_url = item_result['url']
-            result.append({'index': index, 'keyword': keyword, 'url': url, 'code': 0, 'rank': rank, 'fullUrl': full_url})
+            result.append({'index': index, 'keyword': keyword, 'url': url, 'code': 0, 'rank': rank, 'fullUrl': full_url, 'time': date_time})
         time.sleep(DEPLAY)
         
     data = {'code': OK, 'result': result}

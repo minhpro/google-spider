@@ -1,47 +1,45 @@
-/* Style the form - display items horizontally */
-.form-inline {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
 }
 
-/* Add some margins for each label */
-.form-inline label {
-    margin: 5px 10px 5px 0;
+th, td {
+    text-align: left;
+    padding: 8px;
 }
+
+tr:nth-child(even) {background-color: #f2f2f2}
 
 /* Style the input fields */
-.form-inline input {
+input {
     vertical-align: middle;
     margin: 5px 10px 5px 0;
     padding: 10px;
     background-color: #fff;
     border: 1px solid #ddd;
+    padding: 12px 24px; /* Some padding */
+   font-size: 16px; /* Set a font-size */
 }
 
 /* Style the submit button */
-.submit button {
+button {
     padding: 10px 20px;
     background-color: dodgerblue;
     border: 1px solid #ddd;
     color: white;
 }
 
-.submit button:hover {
-background-color: royalblue;
+button:hover {
+    background-color: royalblue;
 }
 
-.inline {
-    display: flex;
-    flex-flow: row wrap;
-}
-
-.inline > * {
-    margin-left: 20px;
-}
-
-.rank-label {
-    padding-left: 10px;
+/* Add a right margin to each icon */
+.fa {
+    margin-left: -12px;
+    margin-right: 8px;
+    visibility: hidden;
 }
 
 .rank {

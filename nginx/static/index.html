@@ -1,78 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <head>
         <title>Google Spider</title>
         <script type="text/javascript" src="js/app.js"></script>
         <link rel="stylesheet" type="text/css" href="css/app.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body>
         <h2>Type your keyword and url</h2>
-        <div id="list">
-            <div class="form-inline">
-                <label for="keyword-1">Keyword:</label><br>
-                <input type="text" id="keyword-1" name="keyword" required><br><br>
-                <label for="url-1">URL:</label><br>
-                <input type="text" id="url-1" name="url" required><br><br>
-                <label class="rank-label" for="rank-1">Rank:</label><br>
-                <input class="rank" type="text" id="rank-1" disabled><br><br>
-                <label for="full-url-1">FullURL:</label><br>
-                <input class="full-url" type="text" id="full-url-1" disabled><br><br>
-            </div>
-            <br>
-            <div class="form-inline">
-                <label for="keyword-2">Keyword:</label><br>
-                <input type="text" id="keyword-2" name="keyword" required><br><br>
-                <label for="url-2">URL:</label><br>
-                <input type="text" id="url-2" name="url" required><br><br>
-                <label class="rank-label" for="rank-2">Rank:</label><br>
-                <input class="rank" type="text" id="rank-2" disabled><br><br>
-                <label for="full-url-2">FullURL:</label><br>
-                <input class="full-url" type="text" id="full-url-2" disabled><br><br>
-            </div>
-            <br>
-            <div class="form-inline">
-                <label for="keyword-3">Keyword:</label><br>
-                <input type="text" id="keyword-3" name="keyword" required><br><br>
-                <label for="url-3">URL:</label><br>
-                <input type="text" id="url-3" name="url" required><br><br>
-                <label class="rank-label" for="rank-3">Rank:</label><br>
-                <input class="rank" type="text" id="rank-3" disabled><br><br>
-                <label for="full-url-3">FullURL:</label><br>
-                <input class="full-url" type="text" id="full-url-3" disabled><br><br>
-            </div>
-            <br>
-            <div class="form-inline">
-                <label for="keyword-4">Keyword:</label><br>
-                <input type="text" id="keyword-4" name="keyword" required><br><br>
-                <label for="url-4">URL:</label><br>
-                <input type="text" id="url-4" name="url" required><br><br>
-                <label class="rank-label" for="rank-4">Rank:</label><br>
-                <input class="rank" type="text" id="rank-4" disabled><br><br>
-                <label for="full-url-4">FullURL:</label><br>
-                <input class="full-url" type="text" id="full-url-4" disabled><br><br>
-            </div>
-            <br>
-            <div class="form-inline">
-                <label for="keyword-5">Keyword:</label><br>
-                <input type="text" id="keyword-5" name="keyword" required><br><br>
-                <label for="url-5">URL:</label><br>
-                <input type="text" id="url-5" name="url" required><br><br>
-                <label class="rank-label" for="rank-5">Rank:</label><br>
-                <input class="rank" type="text" id="rank-5" disabled><br><br>
-                <label for="full-url-5">FullURL:</label><br>
-                <input class="full-url" type="text" id="full-url-5" disabled><br><br>
-            </div>
+        <div style="overflow-x:auto;">
+            <table id="main">
+                <caption></caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Keyword</th>
+                        <th scope="col">URL</th>
+                        <th scope="col">Submit</th>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Full URL</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Keyword"><input type="text" id="keyword-1" name="keyword" required></td>
+                        <td data-label="URL"><input type="text" id="url-1" name="url" required></td>
+                        <td data-label="Submit"><button onclick="searchOne(1)"><em id="spin-1" class="fa fa-spinner fa-spin"></em>Submit</button></td>
+                        <td data-label="Rank" id="rank-1"></td>
+                        <td data-label="FullURL" id="fullUrl-1"></td>
+                        <td data-label="Time" id="time-1"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Keyword"><input type="text" id="keyword-2" name="keyword" required></td>
+                        <td data-label="URL"><input type="text" id="url-2" name="url" required></td>
+                        <td data-label="Submit"><button onclick="searchOne(2)"><em id="spin-2" class="fa fa-spinner fa-spin"></em>Submit</button></td>
+                        <td data-label="Rank" id="rank-2"></td>
+                        <td data-label="FullURL" id="fullUrl-2"></td>
+                        <td data-label="Time" id="time-2"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Keyword"><input type="text" id="keyword-3" name="keyword" required></td>
+                        <td data-label="URL"><input type="text" id="url-3" name="url" required></td>
+                        <td data-label="Submit"><button onclick="searchOne(3)"><em id="spin-3" class="fa fa-spinner fa-spin"></em>Submit</button></td>
+                        <td data-label="Rank" id="rank-3"></td>
+                        <td data-label="FullURL" id="fullUrl-3"></td>
+                        <td data-label="Time" id="time-3"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Keyword"><input type="text" id="keyword-4" name="keyword" required></td>
+                        <td data-label="URL"><input type="text" id="url-4" name="url" required></td>
+                        <td data-label="Submit"><button onclick="searchOne(4)"><em id="spin-4" class="fa fa-spinner fa-spin"></em>Submit</button></td>
+                        <td data-label="Rank" id="rank-4"></td>
+                        <td data-label="FullURL" id="fullUrl-4"></td>
+                        <td data-label="Time" id="time-4"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Keyword"><input type="text" id="keyword-5" name="keyword" required></td>
+                        <td data-label="URL"><input type="text" id="url-5" name="url" required></td>
+                        <td data-label="Submit"><button onclick="searchOne(5)"><em id="spin-5" class="fa fa-spinner fa-spin"></em>Submit</button></td>
+                        <td data-label="Rank" id="rank-5"></td>
+                        <td data-label="FullURL" id="fullUrl-5"></td>
+                        <td data-label="Time" id="time-5"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <br><br>
-        <div class="inline">
-            <div class="submit">
-                <button type="submit" onclick="searchRank()">Submit</button>
-            </div>
-            <br>
-            <div class="submit">
-                <button type="submit" onclick="getResult(false)" style="background-color: coral;">Get Answer</button>
-            </div>
-        </div>
+        <br>
+        <button type="submit" onclick="searchAll()"><em id="spin-all" class="fa fa-spinner fa-spin"></em>Submit</button>
     </body>
-    <script>getResult(true)</script>
+    <script>getResult()</script>
 </html>

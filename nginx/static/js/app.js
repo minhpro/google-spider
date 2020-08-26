@@ -9,22 +9,92 @@ const EMPTY_RESULT = 3
 const INVALID_INPUT = 4
 const ERROR = 5
 
-const ERROR_MESSAGE = "Something went wrong, please try again!";
+const TIMEOUT_SECONDS = 180
+const GET_ANSWER_INTERVAL = 20
 
-function searchRank() {
-    var items = []
+const ERROR_MESSAGE = "Đã có lỗi xử ra, xin vui lòng thử lại!";
+const SEARCHING_MESSAGE = "Từ khoá đang được tìm kiếm, xin hãy thử lại sau!";
+const TIMEOUT_MESSAGE = "Không thể nhận được kết quả, xin vui lòng thử lại!"
+
+// App global state
+var waiting = false; // is waiting the answer? cannot submit question while waiting
+
+function setup_waiting_timeout(spinElement) {
+    waiting = true;
+    spinElement.style.visibility = "visible";
+    // waiting in maximum TIMEOUT_SECONDS
+    var waiting_timer = setTimeout(() => {
+        if (waiting) {
+            alert(TIMEOUT_MESSAGE);
+            spinElement.style.visibility = "hidden";
+            waiting = false;
+        }
+    }, TIMEOUT_SECONDS * 1000);
+    return waiting_timer;
+}
+
+function check_waiting() {
+    if (waiting) {
+        alert(SEARCHING_MESSAGE)
+        return true;
+    }
+    return false;
+}
+
+function updateAnswer(waiting_timer, spinElement) {
+    setTimeout(() => {
+        var code = getResult();
+        if (code == SEARCHING && waiting) {
+            updateAnswer(waiting_timer, spinElement);
+        } else {
+            waiting = false;
+            spinElement.style.visibility = "hidden";
+            clearTimeout(waiting_timer);
+            if (code == EMPTY_RESULT) {
+                alert("Không lấy được kết quả, xin vui lòng thử lại!")
+            }
+            if (code == ERROR) {
+                alertError();
+            }
+        }
+    }, GET_ANSWER_INTERVAL * 1000)
+}
+
+function searchOne(index) {
+    var items = [];
+    var keyword = document.getElementById('keyword-' + index).value;
+    var url = document.getElementById('url-' + index).value;
+    if (keyword && keyword !== "" && url && url !== "")
+        items.push({'index': index, 'keyword': keyword, 'url': url})
+
+    console.log(items);
+    if (items.length == 0) {
+        alert("Hãy nhập keyword và url để tìm kiếm!");
+        return;
+    }
+    searchRank(items, document.getElementById("spin-" + index));
+}
+
+function searchAll() {
+    if (check_waiting())
+        return;
+    var items = [];
     for (var index = 1; index <= 5; index++) {
         var keyword = document.getElementById('keyword-' + index).value;
         var url = document.getElementById('url-' + index).value;
         if (keyword && keyword !== "" && url && url !== "")
             items.push({'index': index, 'keyword': keyword, 'url': url})
     }
-    
+
     console.log(items);
     if (items.length == 0) {
-        alert("Please fill at least one keyword and one url to search");
+        alert("Hãy nhập ít nhất một keyword và một url để tìm kiếm!");
         return;
     }
+    searchRank(items, document.getElementById("spin-all"));
+}
+
+function searchRank(items, spinElement) {
     const parameter = {
         method: 'POST',
         headers: {
@@ -40,11 +110,13 @@ function searchRank() {
                 console.log(data);
                 var code = data['code'];
                 if (code == OK) {
-                    alert("Keywords will be search. You can get the answer after some (at most three) minutes!")
+                    alert("Từ khoá đang được tìm kiếm, kết quả sẽ được cập nhật sau ít phút!")
+                    var waiting_timer = setup_waiting_timeout(spinElement);
+                    updateAnswer(waiting_timer, spinElement);
                 } else if (code == SEARCHING) {
-                    alert("System is searching. Please try again after some minutes!");
+                    alert(SEARCHING_MESSAGE);
                 } else if (code == SLEEPY) {
-                    alert("System is busy. Please try again after one minute!");
+                    alert("Hệ thống đang bận, hãy thử lại sau một phút!");
                 } else {
                     alertError();
                 }
@@ -64,17 +136,18 @@ function updateRankAndFullURL(data) {
         var index = element['index']
         document.getElementById('keyword-' + index).value = element['keyword'];
         document.getElementById('url-' + index).value = element['url'];
+        document.getElementById('time-' + index).textContent = element['time'];
         if (element['code'] == 0) {
-            document.getElementById('rank-' + index).value = element['rank'];
-            document.getElementById('full-url-' + index).value = element['fullUrl'];
+            document.getElementById('rank-' + index).textContent = element['rank'];
+            document.getElementById('fullUrl-' + index).textContent = element['fullUrl'];
         } else {
-            document.getElementById('rank-' + index).value = '';
-            document.getElementById('full-url-' + index).value = element['message'];
+            document.getElementById('rank-' + index).textContent = '';
+            document.getElementById('fullUrl-' + index).textContent = element['message'];
         }
     });
 }
 
-function getResult(ignoreNoAnswer) {
+function getResult() {
     fetch('/api/result')
         .then(response => response.json())
         .then(data => {
@@ -83,22 +156,15 @@ function getResult(ignoreNoAnswer) {
                 var code = data['code'];
                 if ( code == OK) {
                     updateRankAndFullURL(data);
-                } else if (code == EMPTY_RESULT && !ignoreNoAnswer) {
-                    alert("There is no answer, please try again!");
-                } else if (code == SEARCHING && !ignoreNoAnswer) 
-                {
-                    alert("Keywords are searching. Please get the answer later!");
-                } else if (!ignoreNoAnswer) {
-                    alertError();
                 }
-            } else if (!ignoreNoAnswer) {
-                alertError();
+                return code;
+            } else {
+                return ERROR;
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            if (!ignoreNoAnswer)
-                alertError();
+            return ERROR;
         });
 }
 
