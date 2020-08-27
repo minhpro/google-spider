@@ -4,6 +4,7 @@ import json
 import time
 from datetime import datetime
 from threading import Thread
+import logging
 
 from flask import Flask, request, Response
 from flask import make_response, jsonify
@@ -78,9 +79,41 @@ def search_one():
 
     return {'code': OK, 'message': "We are searching. Please get result after some minutes"}
 
-def save_search_result(data, file):
-    with open(file, 'w', encoding="utf-8") as fp:
-        json.dump(data, fp, ensure_ascii=False)
+def save_search_result(data, is_search_all):
+    save_content = {'code': OK, 'result': data}
+    if is_search_all:
+        with open(DATA_FILE, 'w', encoding="utf-8") as fp:
+            json.dump(save_content, fp, ensure_ascii=False)
+    else:
+        with open(ONE_ANSWER_FILE, 'w', encoding="utf-8") as fp:
+            json.dump(save_content, fp, ensure_ascii=False)
+        
+        items = []
+        try:
+            with open(DATA_FILE, "r") as f:
+                content = f.read()
+                if content and content != "":
+                    logging.info("CONTENT: " + content)
+                    old_items = json.loads(content)['result']
+                    isExist = False
+                    for i, item in enumerate(old_items):
+                        if item['index'] == data['index']:
+                            old_items[i] = data
+                            isExist = True
+                            break
+                    if not isExist:
+                        old_items.append(data)
+                    items = old_items
+                    logging.info("NEW ITEMS: " + str(items))
+                else:
+                    items.append(data)
+        except FileNotFoundError:
+            items.append(data)
+        except Exception as e:
+            logging.error("FAILED: " + str(e))
+
+        with open(DATA_FILE, 'w', encoding="utf-8") as fp:
+            json.dump({'code': OK, 'result': items}, fp, ensure_ascii=False)          
 
 def save_state(state):
     with open(STATE_FILE, 'w') as fp:
@@ -144,8 +177,7 @@ def multi_items_search(items):
             result.append({'index': index, 'keyword': keyword, 'url': url, 'code': 0, 'rank': rank, 'fullUrl': full_url, 'time': date_time})
         time.sleep(NEXT_KEYWORD_DELAY)
         
-    data = {'code': OK, 'result': result}
-    save_search_result(data, DATA_FILE)
+    save_search_result(result, True)
     save_state('{} {}'.format(DONE, int(time.time())))
 
 # Should searching in a thread
@@ -164,8 +196,7 @@ def one_item_search(item):
         full_url = item_result['url']
         result = {'index': index, 'keyword': keyword, 'url': url, 'code': 0, 'rank': rank, 'fullUrl': full_url, 'time': date_time}
 
-    data = {'code': OK, 'result': result}
-    save_search_result(data, ONE_ANSWER_FILE)
+    save_search_result(result, False)
     save_state('{} {}'.format(DONE, int(time.time())))
 
 def spider_search(keyword, url, maxpage, num):
@@ -196,7 +227,10 @@ def spider_search(keyword, url, maxpage, num):
                     return None
             except Exception:
                 return None
-        time.sleep(DELAY)
+        if (i > 0 and i % 10 == 0):
+            time.sleep(NEXT_KEYWORD_DELAY)
+        else:
+            time.sleep(DELAY)
 
 if __name__ == '__main__':
     with open(STATE_FILE, "w+") as f:
