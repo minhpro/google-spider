@@ -18,7 +18,7 @@ const ERROR_MESSAGE = "⚠️ Đã có lỗi xử ra, xin vui lòng thử lại!
 const SEARCHING_MESSAGE = "⚠️ Từ khoá đang được tìm kiếm, xin hãy thử lại sau!";
 const TIMEOUT_MESSAGE = "⚠️ Không thể nhận được kết quả, xin vui lòng thử lại!"
 
-const URL_MAX_LENGTH = 50
+const URL_MAX_LENGTH = 30
 
 // App global state
 var waiting = false; // is waiting the answer? cannot submit question while waiting
