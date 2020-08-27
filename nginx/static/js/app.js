@@ -18,6 +18,8 @@ const ERROR_MESSAGE = "⚠️ Đã có lỗi xử ra, xin vui lòng thử lại!
 const SEARCHING_MESSAGE = "⚠️ Từ khoá đang được tìm kiếm, xin hãy thử lại sau!";
 const TIMEOUT_MESSAGE = "⚠️ Không thể nhận được kết quả, xin vui lòng thử lại!"
 
+const URL_MAX_LENGTH = 50
+
 // App global state
 var waiting = false; // is waiting the answer? cannot submit question while waiting
 
@@ -207,7 +209,7 @@ function updateOneItem(index, item) {
     if (item['code'] == 0) {
         document.getElementById('rank-' + index).textContent = item['rank'];
         var link = item['fullUrl'];
-        urlElemement.textContent = link;
+        urlElemement.textContent = urlNormalize(link);
         urlElemement.setAttribute('href', link);
     } else {
         document.getElementById('rank-' + index).textContent = '';
@@ -219,4 +221,11 @@ function updateOneItem(index, item) {
 
 function alertError() {
     alert(ERROR_MESSAGE);
+}
+
+function urlNormalize(url) {
+    if (url.length > URL_MAX_LENGTH) {
+        return url.substring(0, URL_MAX_LENGTH) + "...";
+    }
+    return url;
 }
