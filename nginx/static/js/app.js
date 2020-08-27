@@ -1,4 +1,6 @@
 
+const NUMBER_ITEMS = 10
+
 const INIT_STATE = 0
 const SEARCHING = 1
 const SLEEPY = 2
@@ -9,77 +11,39 @@ const EMPTY_RESULT = 3
 const INVALID_INPUT = 4
 const ERROR = 5
 
-const TIMEOUT_SECONDS = 180
-const GET_ANSWER_INTERVAL = 20
+const TIMEOUT_SECONDS = 120
+const GET_ANSWER_INTERVAL = 10
 
-const ERROR_MESSAGE = "Đã có lỗi xử ra, xin vui lòng thử lại!";
-const SEARCHING_MESSAGE = "Từ khoá đang được tìm kiếm, xin hãy thử lại sau!";
-const TIMEOUT_MESSAGE = "Không thể nhận được kết quả, xin vui lòng thử lại!"
+const ERROR_MESSAGE = "⚠️ Đã có lỗi xử ra, xin vui lòng thử lại!";
+const SEARCHING_MESSAGE = "⚠️ Từ khoá đang được tìm kiếm, xin hãy thử lại sau!";
+const TIMEOUT_MESSAGE = "⚠️ Không thể nhận được kết quả, xin vui lòng thử lại!"
 
 // App global state
 var waiting = false; // is waiting the answer? cannot submit question while waiting
 
-function setup_waiting_timeout(spinElement) {
-    waiting = true;
-    spinElement.style.visibility = "visible";
-    // waiting in maximum TIMEOUT_SECONDS
-    var waiting_timer = setTimeout(() => {
-        if (waiting) {
-            alert(TIMEOUT_MESSAGE);
-            spinElement.style.visibility = "hidden";
-            waiting = false;
-        }
-    }, TIMEOUT_SECONDS * 1000);
-    return waiting_timer;
-}
-
-function check_waiting() {
+function searchOne(index) {
     if (waiting) {
         alert(SEARCHING_MESSAGE)
-        return true;
+        return;
     }
-    return false;
-}
-
-function updateAnswer(waiting_timer, spinElement) {
-    setTimeout(() => {
-        var code = getResult();
-        if (code == SEARCHING && waiting) {
-            updateAnswer(waiting_timer, spinElement);
-        } else {
-            waiting = false;
-            spinElement.style.visibility = "hidden";
-            clearTimeout(waiting_timer);
-            if (code == EMPTY_RESULT) {
-                alert("Không lấy được kết quả, xin vui lòng thử lại!")
-            }
-            if (code == ERROR) {
-                alertError();
-            }
-        }
-    }, GET_ANSWER_INTERVAL * 1000)
-}
-
-function searchOne(index) {
-    var items = [];
     var keyword = document.getElementById('keyword-' + index).value;
     var url = document.getElementById('url-' + index).value;
-    if (keyword && keyword !== "" && url && url !== "")
-        items.push({'index': index, 'keyword': keyword, 'url': url})
-
-    console.log(items);
-    if (items.length == 0) {
+    if (!keyword || keyword === "" || !url || url === "") {
         alert("Hãy nhập keyword và url để tìm kiếm!");
         return;
     }
-    searchRank(items, document.getElementById("spin-" + index));
+    var body = {'item': {'index': index, 'keyword': keyword, 'url': url}};
+    var searchInfo = {'index': index, 'url': '/api/searchOne', 'body': body};
+    search(searchInfo);
 }
 
 function searchAll() {
-    if (check_waiting())
+    if (waiting) {
+        alert(SEARCHING_MESSAGE)
         return;
+    }
     var items = [];
-    for (var index = 1; index <= 5; index++) {
+    for (var index = 1; index <= NUMBER_ITEMS; index++) {
         var keyword = document.getElementById('keyword-' + index).value;
         var url = document.getElementById('url-' + index).value;
         if (keyword && keyword !== "" && url && url !== "")
@@ -91,19 +55,24 @@ function searchAll() {
         alert("Hãy nhập ít nhất một keyword và một url để tìm kiếm!");
         return;
     }
-    searchRank(items, document.getElementById("spin-all"));
+
+    var searchInfo = {'index': 0, 'url': '/api/search', 'body': {'items': items}};
+    search(searchInfo);
 }
 
-function searchRank(items, spinElement) {
+function search(searchInfo) {
+    var index = searchInfo['index']; // 0: all, > 0: search for one keyword at index
+    var body = searchInfo['body']; // search body
+    var url = searchInfo['url'];
     const parameter = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({'items': items})
+        body: JSON.stringify(body)
     };
 
-    fetch('/api/search', parameter)
+    fetch(url, parameter)
         .then(response => response.json())
         .then(data => {
             if (data) {
@@ -111,8 +80,8 @@ function searchRank(items, spinElement) {
                 var code = data['code'];
                 if (code == OK) {
                     alert("Từ khoá đang được tìm kiếm, kết quả sẽ được cập nhật sau ít phút!")
-                    var waiting_timer = setup_waiting_timeout(spinElement);
-                    updateAnswer(waiting_timer, spinElement);
+                    var waiting_timer = setup_waiting_timeout(index);
+                    updateAnswer(waiting_timer, index);
                 } else if (code == SEARCHING) {
                     alert(SEARCHING_MESSAGE);
                 } else if (code == SLEEPY) {
@@ -130,24 +99,7 @@ function searchRank(items, spinElement) {
         });
 }
 
-function updateRankAndFullURL(data) {
-    var items = data['result']
-    items.forEach(element => {
-        var index = element['index']
-        document.getElementById('keyword-' + index).value = element['keyword'];
-        document.getElementById('url-' + index).value = element['url'];
-        document.getElementById('time-' + index).textContent = element['time'];
-        if (element['code'] == 0) {
-            document.getElementById('rank-' + index).textContent = element['rank'];
-            document.getElementById('fullUrl-' + index).textContent = element['fullUrl'];
-        } else {
-            document.getElementById('rank-' + index).textContent = '';
-            document.getElementById('fullUrl-' + index).textContent = element['message'];
-        }
-    });
-}
-
-function getResult() {
+function get_all_answer() {
     fetch('/api/result')
         .then(response => response.json())
         .then(data => {
@@ -157,15 +109,110 @@ function getResult() {
                 if ( code == OK) {
                     updateRankAndFullURL(data);
                 }
-                return code;
+            } 
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
+// index: 0: all, > 0: search for one keyword at index
+function setup_waiting_timeout(index) {
+    waiting = true;
+    var spinElement = document.getElementById("spin-" + index);
+    if (index == 0) {
+        spinElement = document.getElementById("spin-all");
+    }
+    spinElement.style.visibility = "visible";
+    // waiting in maximum TIMEOUT_SECONDS
+    var time_out = index == 0 ? TIMEOUT_SECONDS * NUMBER_ITEMS : TIMEOUT_SECONDS;
+    var waiting_timer = setTimeout(() => {
+        if (waiting) {
+            alert(TIMEOUT_MESSAGE);
+            spinElement.style.visibility = "hidden";
+            waiting = false;
+        }
+    }, time_out * 1000);
+    return waiting_timer;
+}
+
+// index: 0: update all, > 0: update the answer for one keyword at index
+function updateAnswer(waiting_timer, index) {
+    var spinElement = document.getElementById("spin-" + index);
+    var url = '/api/oneResult';
+
+    if (index == 0) {
+        spinElement = document.getElementById("spin-all");
+        url = '/api/result'
+    }
+
+    setTimeout(() => {
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                console.log(data); 
+                var code = data['code'];
+                if ( code == OK) {
+                    if (index == 0)
+                        updateRankAndFullURL(data);
+                    else
+                        updateOneRankAndFullURL(index, data);
+                }
+                if (code == SEARCHING && waiting) {
+                    updateAnswer(waiting_timer, index);
+                } else {
+                    waiting = false;
+                    spinElement.style.visibility = "hidden";
+                    clearTimeout(waiting_timer);
+                    if (code == EMPTY_RESULT) {
+                        alert("Không lấy được kết quả, xin vui lòng thử lại!")
+                    }
+                    if (code == ERROR) {
+                        alertError();
+                    }
+                }
             } else {
-                return ERROR;
+                alertError();
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            return ERROR;
+            alertError();
         });
+    }, GET_ANSWER_INTERVAL * 1000)
+}
+
+function updateRankAndFullURL(data) {
+    var items = data['result']
+    items.forEach(item => {
+        var index = item['index']
+        updateOneItem(index, item)
+    });
+}
+
+function updateOneRankAndFullURL(index, data) {
+    var item = data['result']
+   updateOneItem(index, item)
+}
+
+function updateOneItem(index, item) {
+    document.getElementById('keyword-' + index).value = item['keyword'];
+    document.getElementById('url-' + index).value = item['url'];
+    document.getElementById('time-' + index).textContent = item['time'];
+    var urlElemement = document.getElementById('fullUrl-' + index);
+
+    if (item['code'] == 0) {
+        document.getElementById('rank-' + index).textContent = item['rank'];
+        var link = item['fullUrl'];
+        urlElemement.textContent = link;
+        urlElemement.setAttribute('href', link);
+    } else {
+        document.getElementById('rank-' + index).textContent = '';
+        urlElemement.textContent = '';
+        urlElemement.setAttribute('href', '');
+        document.getElementById('time-' + index).textContent = "Không tìm thấy!"
+    }
 }
 
 function alertError() {
