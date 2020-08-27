@@ -135,7 +135,7 @@ def multi_items_search(items):
         url = item['url']
         item_result = spider_search(keyword, url, MAX_PAGE, NUM)
 
-        date_time = datetime.now().strftime("%m-%d-%Y, %H:%M:%S")
+        date_time = datetime.now().strftime("%Y-%m-%d, %H:%M:%S")
         if not item_result:
             result.append({'index': index, 'keyword': keyword, 'url': url, 'code': 1, 'message': "Not Found", 'time': date_time})
         else:
