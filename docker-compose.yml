@@ -18,6 +18,8 @@ services:
     container_name: spider-service
     networks:
       - spider-network
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
 
 networks:
   spider-network:
