@@ -16,6 +16,8 @@ services:
   spider-service:
     build: ./rank-spider
     container_name: spider-service
+    volumes:
+      - result-data:/app/data
     networks:
       - spider-network
     environment:
@@ -24,3 +26,6 @@ services:
 networks:
   spider-network:
     driver: bridge
+
+volumes:
+  result-data:
