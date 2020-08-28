@@ -102,7 +102,7 @@ function search(searchInfo) {
 }
 
 function get_all_answer() {
-    fetch('/api/result')
+    fetch('/api/oldResult')
         .then(response => response.json())
         .then(data => {
             if (data) {
@@ -110,8 +110,6 @@ function get_all_answer() {
                 var code = data['code'];
                 if ( code == OK) {
                     updateRankAndFullURL(data);
-                } else if ( code == SEARCHING ) {
-                    alert(SEARCHING_MESSAGE)
                 }
             } 
         })

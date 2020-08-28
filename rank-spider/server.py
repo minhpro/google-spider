@@ -12,9 +12,9 @@ app = Flask(__name__)
 
 MAX_PAGE = 100
 NUM = 10
-STATE_FILE = "state.dat"
-DATA_FILE = "data.json"
-ONE_ANSWER_FILE = "item.json"
+STATE_FILE = "data/state.dat"
+DATA_FILE = "data/data.json"
+ONE_ANSWER_FILE = "data/item.json"
 
 INIT_STATE = 0
 SEARCHING = 1
@@ -27,7 +27,7 @@ INVALID_INPUT = 4
 ERROR = 5
 
 DELAY = 2
-NEXT_KEYWORD_DELAY = 5
+NEXT_KEYWORD_DELAY = 10
 WAIT_TIME = 10
 TIMEOUT_SEARCHING = 120
 
@@ -37,13 +37,32 @@ BUSY_MESSAGE = "System is busy. Please try again later after one minute!"
 def hello_world():
     return 'Hello Spiderbot!'
 
+@app.route('/oldResult')
+def get_old_result():
+    return get_result(False, True)
+
 @app.route('/result')
 def get_all_result():
-    return get_result(True)
+    return get_result(True, True)
 
 @app.route('/oneResult')
 def get_one_result():
-    return get_result(False)
+    return get_result(True, False)
+
+@app.route('/oldSearch', methods = ['GET'])
+def old_search():
+    content = ""
+    with open(DATA_FILE, "r") as f:
+        content = f.read()
+        
+    if content != "":
+        old_items = json.loads(content)['result']
+        thread = Thread(target = multi_items_search, args = (old_items, ))
+        thread.start()
+        return {'code': OK, 'message': "OK"}
+    else:
+        return {'code': EMPTY_RESULT, 'message': "IGNORE"}
+
 
 @app.route('/search', methods = ['POST'])
 def search():
@@ -95,13 +114,13 @@ def save_search_result(data, is_search_all):
                 if content and content != "":
                     logging.info("CONTENT: " + content)
                     old_items = json.loads(content)['result']
-                    isExist = False
+                    is_exist = False
                     for i, item in enumerate(old_items):
                         if item['index'] == data['index']:
                             old_items[i] = data
-                            isExist = True
+                            is_exist = True
                             break
-                    if not isExist:
+                    if not is_exist:
                         old_items.append(data)
                     items = old_items
                     logging.info("NEW ITEMS: " + str(items))
@@ -134,17 +153,18 @@ def check_state(is_search_all):
 
             if state == DONE:
                 done_time = int(values[1])
-                wait_time = (WAIT_TIME * 5) if is_search_all else WAIT_TIME
+                wait_time = (WAIT_TIME * 10) if is_search_all else WAIT_TIME
                 if (now - done_time) < wait_time:
                     return SLEEPY
         except Exception:
             return ERROR
     return OK
 
-def get_result(is_search_all):
-    state_code = check_state(is_search_all)
-    if state_code == SEARCHING:
-        return {'code': SEARCHING, 'message': "System is busy. Please try again later after one minute!"}
+def get_result(is_get_new_data, is_search_all):
+    if is_get_new_data:
+        state_code = check_state(is_search_all)
+        if state_code == SEARCHING:
+            return {'code': SEARCHING, 'message': "System is busy. Please try again later after one minute!"}
 
     try:
         file = DATA_FILE if is_search_all else ONE_ANSWER_FILE
