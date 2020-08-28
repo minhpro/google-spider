@@ -63,12 +63,12 @@ DOWNLOAD_DELAY = 0.25
 #     'scrapy_fake_useragent.middleware.RetryUserAgentMiddleware': 401,
 # }
 
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    'random_useragent.RandomUserAgentMiddleware': 400
-}
+# DOWNLOADER_MIDDLEWARES = {
+#     'scrapy.downloadermiddleware.useragent.UserAgentMiddleware': None,
+#     'random_useragent.RandomUserAgentMiddleware': 400
+# }
 
-USER_AGENT_LIST = "./bot/useragents.txt"
+# USER_AGENT_LIST = "./bot/useragents.txt"
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
