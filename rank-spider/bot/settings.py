@@ -63,10 +63,10 @@ DOWNLOAD_DELAY = 0.25
 #     'scrapy_fake_useragent.middleware.RetryUserAgentMiddleware': 401,
 # }
 
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    'random_useragent.RandomUserAgentMiddleware': 400
-}
+# DOWNLOADER_MIDDLEWARES = {
+#     'scrapy.downloadermiddleware.useragent.UserAgentMiddleware': None,
+#     'random_useragent.RandomUserAgentMiddleware': 400
+# }
 
 USER_AGENT_LIST = "./bot/useragents.txt"
 
