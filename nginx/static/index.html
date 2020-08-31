@@ -5,15 +5,17 @@
         <title>Google Spider</title>
         <script type="text/javascript" src="js/app.js"></script>
         <link rel="stylesheet" type="text/css" href="css/app.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body>
         <h2>Type your keyword and url</h2>
-        <div style="overflow-x:auto;">
+        <div style="height:70vh;overflow-x:auto;">
             <table id="main">
                 <caption></caption>
                 <thead>
                     <tr>
+                        <th scope="col">Select</th>
                         <th scope="col">Keyword</th>
                         <th scope="col">URL</th>
                         <th scope="col">Submit</th>
@@ -23,91 +25,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-1" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-1" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(1)"><em id="spin-1" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-1"></td>
-                        <td data-label="FullURL"><a id="fullUrl-1" href=""></a></td>
-                        <td data-label="Time" id="time-1"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-2" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-2" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(2)"><em id="spin-2" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-2"></td>
-                        <td data-label="FullURL"><a id="fullUrl-2" href=""></a></td>
-                        <td data-label="Time" id="time-2"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-3" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-3" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(3)"><em id="spin-3" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-3"></td>
-                        <td data-label="FullURL"><a id="fullUrl-3" href=""></a></td>
-                        <td data-label="Time" id="time-3"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-4" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-4" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(4)"><em id="spin-4" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-4"></td>
-                        <td data-label="FullURL"><a id="fullUrl-4" href=""></a></td>
-                        <td data-label="Time" id="time-4"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-5" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-5" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(5)"><em id="spin-5" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-5"></td>
-                        <td data-label="FullURL"><a id="fullUrl-5" href=""></a></td>
-                        <td data-label="Time" id="time-5"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-6" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-6" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(6)"><em id="spin-6" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-6"></td>
-                        <td data-label="FullURL"><a id="fullUrl-6" href=""></a></td>
-                        <td data-label="Time" id="time-6"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-7" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-7" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(7)"><em id="spin-7" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-7"></td>
-                        <td data-label="FullURL"><a id="fullUrl-7" href=""></a></td>
-                        <td data-label="Time" id="time-7"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-8" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-8" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(8)"><em id="spin-8" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-8"></td>
-                        <td data-label="FullURL"><a id="fullUrl-8" href=""></a></td>
-                        <td data-label="Time" id="time-8"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-9" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-9" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(10)"><em id="spin-9" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-9"></td>
-                        <td data-label="FullURL"><a id="fullUrl-9" href=""></a></td>
-                        <td data-label="Time" id="time-9"></td>
-                    </tr>
-                    <tr>
-                        <td data-label="Keyword"><input type="text" id="keyword-10" name="keyword" required></td>
-                        <td data-label="URL"><input type="text" id="url-10" name="url" required></td>
-                        <td data-label="Submit"><button onclick="searchOne(10)"><em id="spin-10" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                        <td data-label="Rank" id="rank-10"></td>
-                        <td data-label="FullURL"><a id="fullUrl-10" href=""></a></td>
-                        <td data-label="Time" id="time-10"></td>
-                    </tr>
                 </tbody>
             </table>
         </div>
         <br>
-        <button type="submit" onclick="searchAll()"><em id="spin-all" class="fa fa-spinner fa-spin"></em>Submit All</button>
+        <div style="width: 100%;">
+            <div class="inline"><button  type="submit" onclick="searchAll()"><em id="spin-all" class="fa fa-spinner fa-spin"></em>Submit All</button></div>
+            <div class="inline"><button type="submit" onclick="toogleAll(true)"><em id="spin-all" class="fa fa-spinner fa-spin"></em>Select All</button></div>
+            <div class="inline"><button type="submit" onclick="toogleAll(false)"><em id="spin-all" class="fa fa-spinner fa-spin"></em>Unselect All</button></div>
+        </div>
     </body>
+    <script>
+        var tbody = $("#main > tbody");
+        var rowTemplate = `
+            <tr>
+                <td data-label="Select"><input type="checkbox" id="check-index" name="check" required></td>
+                <td data-label="Keyword"><input type="text" id="keyword-index" name="keyword" required></td>
+                <td data-label="URL"><input type="text" id="url-index" name="url" required></td>
+                <td data-label="Submit"><button onclick="searchOne(index)"><em id="spin-index" class="fa fa-spinner fa-spin"></em>Submit</button></td>
+                <td data-label="Rank" id="rank-index"></td>
+                <td data-label="FullURL"><a id="fullUrl-index" href=""></a></td>
+                <td data-label="Time" id="time-index"></td>
+            </tr>`;
+
+        for (var i = 1; i <= 20; i++) {
+            var row = $.parseHTML(rowTemplate.replaceAll("index", i))
+            tbody.append(row)
+        }
+    </script>
     <script>get_all_answer()</script>
 </html>

@@ -1,5 +1,5 @@
 
-const NUMBER_ITEMS = 10
+const NUMBER_ITEMS = 20
 
 const INIT_STATE = 0
 const SEARCHING = 1
@@ -46,6 +46,10 @@ function searchAll() {
     }
     var items = [];
     for (var index = 1; index <= NUMBER_ITEMS; index++) {
+        var checked = document.getElementById('check-' + index).checked;
+        if (!checked) {
+            continue;
+        }
         var keyword = document.getElementById('keyword-' + index).value;
         var url = document.getElementById('url-' + index).value;
         if (keyword && keyword !== "" && url && url !== "")
@@ -54,7 +58,7 @@ function searchAll() {
 
     console.log(items);
     if (items.length == 0) {
-        alert("Hãy nhập ít nhất một keyword và một url để tìm kiếm!");
+        alert("Hãy chọn ít nhất một keyword và một url để tìm kiếm!");
         return;
     }
 
@@ -225,4 +229,10 @@ function urlNormalize(url) {
         return url.substring(0, URL_MAX_LENGTH) + "...";
     }
     return url;
+}
+
+function toogleAll(select) {
+    for (var i = 1; i <= 20; i++) {
+        document.getElementById('check-' + i).checked = select;
+    }
 }
