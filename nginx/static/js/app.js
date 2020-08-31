@@ -211,9 +211,8 @@ function updateOneItem(index, item) {
         urlElemement.setAttribute('href', link);
     } else {
         document.getElementById('rank-' + index).textContent = '';
-        urlElemement.textContent = '';
+        urlElemement.textContent = "Không tìm thấy!";
         urlElemement.setAttribute('href', '');
-        document.getElementById('time-' + index).textContent = "Không tìm thấy!"
     }
 }
 
