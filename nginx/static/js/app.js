@@ -22,6 +22,7 @@ const URL_MAX_LENGTH = 30
 
 // App global state
 var waiting = false; // is waiting the answer? cannot submit question while waiting
+var current_row_count = 0; // Number of rows in the table
 
 function searchOne(index) {
     if (waiting) {
@@ -45,7 +46,7 @@ function searchAll() {
         return;
     }
     var items = [];
-    for (var index = 1; index <= NUMBER_ITEMS; index++) {
+    for (var index = 1; index <= current_row_count; index++) {
         var checked = document.getElementById('check-' + index).checked;
         if (!checked) {
             continue;
@@ -114,8 +115,8 @@ function get_all_answer() {
                 var code = data['code'];
                 if ( code == OK) {
                     var items = data['result']
-                    var maxIndex = items.reduce((acc, item) => item['index'] > acc ? item['index'] : acc, 0);
-                    initTableBody(maxIndex);
+                    current_row_count = items.reduce((acc, item) => item['index'] > acc ? item['index'] : acc, 0);
+                    initTableBody(current_row_count);
                     updateRankAndFullURL(data);
                 }
             } else {
@@ -263,7 +264,8 @@ function initTableBody(number) {
 }
 
 function initDefaultTableBody() {
-    initTableBody(NUMBER_ITEMS);
+    current_row_count = NUMBER_ITEMS;
+    initTableBody(current_row_count);
 }
 
 function appendRow() {
@@ -281,4 +283,5 @@ function appendRow() {
         </tr>`;
 
     tbody.append(rowTemplate.replaceAll("index", tbodyLength + 1));
+    current_row_count++;
 }

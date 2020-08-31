@@ -100,39 +100,39 @@ def search_one():
 
 def save_search_result(data, is_search_all):
     save_content = {'code': OK, 'result': data}
-    if is_search_all:
-        with open(DATA_FILE, 'w', encoding="utf-8") as fp:
-            json.dump(save_content, fp, ensure_ascii=False)
-    else:
+    if not is_search_all:
         with open(ONE_ANSWER_FILE, 'w', encoding="utf-8") as fp:
             json.dump(save_content, fp, ensure_ascii=False)
         
-        items = []
-        try:
-            with open(DATA_FILE, "r") as f:
-                content = f.read()
-                if content and content != "":
-                    logging.info("CONTENT: " + content)
-                    old_items = json.loads(content)['result']
+    items = []
+    new_items = data if is_search_all else [data]
+    
+    try:
+        with open(DATA_FILE, "r") as f:
+            content = f.read()
+            if content and content != "":
+                logging.info("CONTENT: " + content)
+                old_items = json.loads(content)['result']
+                for new_item in new_items:
                     is_exist = False
                     for i, item in enumerate(old_items):
-                        if item['index'] == data['index']:
-                            old_items[i] = data
+                        if item['index'] == new_item['index']:
+                            old_items[i] = new_item
                             is_exist = True
                             break
                     if not is_exist:
-                        old_items.append(data)
-                    items = old_items
-                    logging.info("NEW ITEMS: " + str(items))
-                else:
-                    items.append(data)
-        except FileNotFoundError:
-            items.append(data)
-        except Exception as e:
-            logging.error("FAILED: " + str(e))
+                        old_items.append(new_item)
+                items = old_items
+                logging.info("NEW ITEMS: " + str(items))
+            else:
+                items.append(new_items)
+    except FileNotFoundError:
+        items.append(data)
+    except Exception as e:
+        logging.error("FAILED: " + str(e))
 
-        with open(DATA_FILE, 'w', encoding="utf-8") as fp:
-            json.dump({'code': OK, 'result': items}, fp, ensure_ascii=False)          
+    with open(DATA_FILE, 'w', encoding="utf-8") as fp:
+        json.dump({'code': OK, 'result': items}, fp, ensure_ascii=False)          
 
 def save_state(state):
     with open(STATE_FILE, 'w') as fp:
