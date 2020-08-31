@@ -25,12 +25,19 @@ class GoogleSearchSpider(scrapy.Spider):
         yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        # filename = 'response.html'
-        # with open(filename, 'wb') as f:
-        #     f.write(response.body)
+        filename = 'response.html'
+        with open(filename, 'wb') as f:
+            f.write(response.body)
         i = int(self.start)
-        for item in response.xpath('//*[@id="rso"]/div/div/div/a'):
-        # for item in response.xpath('//*[@id="main"]/div/div/div/a'):
+        items = response.xpath('//*[@id="rso"]/div/div/div/a')
+        if not items or len(items) == 0:
+            items = response.xpath('//*[@id="main"]/div/div/div/a')
+
+        if not items or len(items) == 0:
+            print("NOT FOUND")
+            yield None
+    
+        for item in items:
             link = item.xpath("@href").get()
             if "url?q=" in link:
                 link = link.split("/url?q=", 1)[1]

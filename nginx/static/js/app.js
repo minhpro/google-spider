@@ -1,5 +1,5 @@
 
-const NUMBER_ITEMS = 20
+const NUMBER_ITEMS = 10
 
 const INIT_STATE = 0
 const SEARCHING = 1
@@ -113,12 +113,18 @@ function get_all_answer() {
                 console.log(data); 
                 var code = data['code'];
                 if ( code == OK) {
+                    var items = data['result']
+                    var maxIndex = items.reduce((acc, item) => item['index'] > acc ? item['index'] : acc, 0);
+                    initTableBody(maxIndex);
                     updateRankAndFullURL(data);
                 }
-            } 
+            } else {
+                initDefaultTableBody();
+            }
         })
         .catch((error) => {
             console.error('Error:', error);
+            initDefaultTableBody();
         });
 }
 
@@ -235,4 +241,44 @@ function toogleAll(select) {
     for (var i = 1; i <= 20; i++) {
         document.getElementById('check-' + i).checked = select;
     }
+}
+
+function initTableBody(number) {
+    var tbody = $("#data");
+    var rowTemplate = `
+        <tr>
+            <td data-label="Select"><input type="checkbox" id="check-index" name="check" required></td>
+            <td data-label="Keyword"><input type="text" id="keyword-index" name="keyword" required></td>
+            <td data-label="URL"><input type="text" id="url-index" name="url" required></td>
+            <td data-label="Submit"><button onclick="searchOne(index)"><em id="spin-index" class="fa fa-spinner fa-spin"></em>Submit</button></td>
+            <td data-label="Rank" id="rank-index"></td>
+            <td data-label="FullURL"><a id="fullUrl-index" href=""></a></td>
+            <td data-label="Time" id="time-index"></td>
+        </tr>`;
+
+    for (var i = 1; i <= number; i++) {
+        var row = $.parseHTML(rowTemplate.replaceAll("index", i));
+        tbody.append(row);
+    }
+}
+
+function initDefaultTableBody() {
+    initTableBody(NUMBER_ITEMS);
+}
+
+function appendRow() {
+    var tbody = $("#data");
+    var tbodyLength = tbody.children().length;
+    var rowTemplate = `
+        <tr>
+            <td data-label="Select"><input type="checkbox" id="check-index" name="check" required></td>
+            <td data-label="Keyword"><input type="text" id="keyword-index" name="keyword" required></td>
+            <td data-label="URL"><input type="text" id="url-index" name="url" required></td>
+            <td data-label="Submit"><button onclick="searchOne(index)"><em id="spin-index" class="fa fa-spinner fa-spin"></em>Submit</button></td>
+            <td data-label="Rank" id="rank-index"></td>
+            <td data-label="FullURL"><a id="fullUrl-index" href=""></a></td>
+            <td data-label="Time" id="time-index"></td>
+        </tr>`;
+
+    tbody.append(rowTemplate.replaceAll("index", tbodyLength + 1));
 }

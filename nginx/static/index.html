@@ -24,34 +24,17 @@
                         <th scope="col">Time</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="data">
                 </tbody>
             </table>
         </div>
         <br>
         <div style="width: 100%;">
             <div class="inline"><button  type="submit" onclick="searchAll()"><em id="spin-all" class="fa fa-spinner fa-spin"></em>Submit All</button></div>
-            <div class="inline"><button type="submit" onclick="toogleAll(true)"><em id="spin-all" class="fa fa-spinner fa-spin"></em>Select All</button></div>
-            <div class="inline"><button type="submit" onclick="toogleAll(false)"><em id="spin-all" class="fa fa-spinner fa-spin"></em>Unselect All</button></div>
+            <div class="inline"><button type="submit" onclick="toogleAll(true)">Select All</button></div>
+            <div class="inline"><button type="submit" onclick="toogleAll(false)">Unselect All</button></div>
+            <div class="inline"><button type="submit" onclick="appendRow()" style="background-color: darkseagreen;">ADD MORE</button></div>
         </div>
     </body>
-    <script>
-        var tbody = $("#main > tbody");
-        var rowTemplate = `
-            <tr>
-                <td data-label="Select"><input type="checkbox" id="check-index" name="check" required></td>
-                <td data-label="Keyword"><input type="text" id="keyword-index" name="keyword" required></td>
-                <td data-label="URL"><input type="text" id="url-index" name="url" required></td>
-                <td data-label="Submit"><button onclick="searchOne(index)"><em id="spin-index" class="fa fa-spinner fa-spin"></em>Submit</button></td>
-                <td data-label="Rank" id="rank-index"></td>
-                <td data-label="FullURL"><a id="fullUrl-index" href=""></a></td>
-                <td data-label="Time" id="time-index"></td>
-            </tr>`;
-
-        for (var i = 1; i <= 20; i++) {
-            var row = $.parseHTML(rowTemplate.replaceAll("index", i))
-            tbody.append(row)
-        }
-    </script>
     <script>get_all_answer()</script>
 </html>
