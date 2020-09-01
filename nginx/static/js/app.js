@@ -258,7 +258,7 @@ function initTableBody(number) {
         </tr>`;
 
     for (var i = 1; i <= number; i++) {
-        var row = $.parseHTML(rowTemplate.replaceAll("index", i));
+        var row = $.parseHTML(rowTemplate.replace(/index/g, i));s
         tbody.append(row);
     }
 }
@@ -282,6 +282,6 @@ function appendRow() {
             <td data-label="Time" id="time-index"></td>
         </tr>`;
 
-    tbody.append(rowTemplate.replaceAll("index", tbodyLength + 1));
+    tbody.append(rowTemplate.replace(/index/g, tbodyLength + 1));
     current_row_count++;
 }
