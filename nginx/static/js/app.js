@@ -258,7 +258,7 @@ function initTableBody(number) {
         </tr>`;
 
     for (var i = 1; i <= number; i++) {
-        var row = $.parseHTML(rowTemplate.replace(/index/g, i));s
+        var row = $.parseHTML(rowTemplate.replace(/index/g, i));
         tbody.append(row);
     }
 }
